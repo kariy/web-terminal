@@ -56,16 +56,20 @@ async fn handle_socket(socket: WebSocket, config: Config) {
         }
     };
 
-    // Spawn shell
-    let mut cmd = CommandBuilder::new(&config.shell);
+    // Spawn tmux session (creates new or attaches to existing)
+    // This allows sharing the terminal between web and direct server access
+    let mut cmd = CommandBuilder::new("tmux");
+    cmd.args(["new-session", "-A", "-s", &config.session]);
     cmd.env("TERM", "xterm-256color");
+    // Set default shell for new tmux sessions
+    cmd.env("SHELL", &config.shell);
 
-    let mut child = match pty_pair.slave.spawn_command(cmd) {
+    let child = match pty_pair.slave.spawn_command(cmd) {
         Ok(child) => child,
         Err(e) => {
-            error!("Failed to spawn shell: {}", e);
+            error!("Failed to spawn tmux: {}", e);
             let _ = ws_sender
-                .send(Message::Text(format!("Error spawning shell: {}", e)))
+                .send(Message::Text(format!("Error spawning tmux: {}", e)))
                 .await;
             return;
         }
@@ -141,8 +145,9 @@ async fn handle_socket(socket: WebSocket, config: Config) {
         }
     }
 
-    // Cleanup
-    let _ = child.kill();
+    // Cleanup - don't kill the tmux session, just abort the send task
+    // The tmux client will detach when the PTY closes
+    drop(child);
     send_task.abort();
-    info!("WebSocket connection closed");
+    info!("WebSocket connection closed (tmux session '{}' persists)", config.session);
 }

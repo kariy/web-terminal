@@ -6,6 +6,7 @@ pub struct Config {
     pub username: String,
     pub password: String,
     pub shell: String,
+    pub session: String,
 }
 
 impl Config {
@@ -21,12 +22,14 @@ impl Config {
             .map_err(|_| "TERM_PORT must be a valid port number")?;
 
         let shell = env::var("TERM_SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
+        let session = env::var("TERM_SESSION").unwrap_or_else(|_| "main".to_string());
 
         Ok(Config {
             port,
             username,
             password,
             shell,
+            session,
         })
     }
 }

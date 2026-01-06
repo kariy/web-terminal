@@ -33,6 +33,7 @@ async fn main() {
             eprintln!("\nOptional:");
             eprintln!("  TERM_PORT     - Server port (default: 3000)");
             eprintln!("  TERM_SHELL    - Shell to spawn (default: /bin/sh)");
+            eprintln!("  TERM_SESSION  - tmux session name (default: main)");
             std::process::exit(1);
         }
     };
@@ -54,7 +55,8 @@ async fn main() {
         .merge(protected_routes);
 
     info!("Starting server on http://{}", addr);
-    info!("Shell: {}", config.shell);
+    info!("tmux session: {} (attach with: tmux attach -t {})", config.session, config.session);
+    info!("Default shell: {}", config.shell);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
