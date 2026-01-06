@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Terminal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      background: #1e1e1e;
+      overflow: hidden;
+    }
+    #terminal {
+      height: 100%;
+      width: 100%;
+    }
+    .xterm {
+      height: 100%;
+      padding: 8px;
+    }
+    #status {
+      position: fixed;
+      top: 8px;
+      right: 8px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      z-index: 1000;
+    }
+    #status.connected {
+      background: #2d5a2d;
+      color: #90ee90;
+    }
+    #status.disconnected {
+      background: #5a2d2d;
+      color: #ee9090;
+    }
+    #status.connecting {
+      background: #5a5a2d;
+      color: #eeee90;
+    }
+  </style>
+</head>
+<body>
+  <div id="status" class="connecting">Connecting...</div>
+  <div id="terminal"></div>
+  <script src="terminal.js"></script>
+</body>
+</html>

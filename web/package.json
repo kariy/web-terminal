@@ -1,0 +1,17 @@
+{
+  "name": "web-terminal-client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/terminal.ts --bundle --outfile=../static/terminal.js --minify",
+    "watch": "esbuild src/terminal.ts --bundle --outfile=../static/terminal.js --watch"
+  },
+  "dependencies": {
+    "@xterm/xterm": "^5.5.0",
+    "@xterm/addon-fit": "^0.10.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0"
+  }
+}
