@@ -58,8 +58,16 @@ async fn handle_socket(socket: WebSocket, config: Config) {
 
     // Spawn tmux session (creates new or attaches to existing)
     // This allows sharing the terminal between web and direct server access
-    let mut cmd = CommandBuilder::new("tmux");
-    cmd.args(["new-session", "-A", "-s", &config.session]);
+    // We use a shell command to:
+    // 1. Create a detached session if it doesn't exist
+    // 2. Attach to the session
+    // This ensures the session persists even when all clients disconnect
+    let mut cmd = CommandBuilder::new("sh");
+    let tmux_cmd = format!(
+        "tmux has-session -t {0} 2>/dev/null || tmux new-session -d -s {0}; exec tmux attach -t {0}",
+        &config.session
+    );
+    cmd.args(["-c", &tmux_cmd]);
     cmd.env("TERM", "xterm-256color");
     // Set default shell for new tmux sessions
     cmd.env("SHELL", &config.shell);
